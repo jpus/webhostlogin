@@ -23,8 +23,8 @@ def login_koyeb(email, password):
         page.goto("https://webhostmost.com/login")
 
         # 输入邮箱和密码
-        page.get_by_placeholder("Email Address").click()
-        page.get_by_placeholder("Email Address").fill(email)
+        page.get_by_placeholder("Enter email").click()
+        page.get_by_placeholder("Enter email").fill(email)
         page.get_by_placeholder("Password").click()
         page.get_by_placeholder("Password").fill(password)
     
@@ -34,14 +34,14 @@ def login_koyeb(email, password):
         # 等待可能出现的错误消息或成功登录后的页面
         try:
             # 等待可能的错误消息
-            error_message = page.wait_for_selector('.MuiAlert-message', timeout=5000)
+            error_message = page.wait_for_selector('.MuiAlert-message', timeout=10000)
             if error_message:
                 error_text = error_message.inner_text()
                 return f"账号 {email} 登录失败: {error_text}"
         except:
             # 如果没有找到错误消息,检查是否已经跳转到仪表板页面
             try:
-                page.wait_for_url("https://webhostmost.com/clientarea.php", timeout=5000)
+                page.wait_for_url("https://webhostmost.com/clientarea.php", timeout=10000)
                 return f"账号 {email} 登录成功!"
             except:
                 return f"账号 {email} 登录失败: 未能跳转到仪表板页面"
