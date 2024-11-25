@@ -19,11 +19,12 @@ def send_telegram_message(message):
         raise Exception(f"Telegram 消息发送失败: {response.text}")
     return response.json()
 
-def login_koyeb(email, password):
+def login_koyeb(email, password, browser_path=None):
     try:
         with sync_playwright() as p:
-            browser = p.firefox.launch(headless=True)
-            page = browser.new_page()
+            # 指定 Playwright 浏览器路径
+            firefox = p.firefox.launch(headless=True, executable_path=browser_path)
+            page = firefox.new_page()
 
             # 访问登录页面
             page.goto("https://webhostmost.com/login")
@@ -47,7 +48,7 @@ def login_koyeb(email, password):
     except Exception as e:
         return f"账号 {email} 登录失败: {str(e)}"
     finally:
-        browser.close()
+        firefox.close()
 
 if __name__ == "__main__":
     accounts = os.environ.get('WEBHOST', '').split()
@@ -56,11 +57,16 @@ if __name__ == "__main__":
         send_telegram_message(error_message)
         print(error_message)
     else:
+        # Playwright 浏览器路径
+        browser_path = os.environ.get('PLAYWRIGHT_BROWSER_PATH', None)
+        if not browser_path:
+            print("未指定浏览器路径，将使用默认浏览器.")
+
         login_statuses = []
         for account in accounts:
             try:
                 email, password = account.split(':')
-                status = login_koyeb(email, password)
+                status = login_koyeb(email, password, browser_path=browser_path)
             except ValueError:
                 status = f"账号配置错误: {account}"
             login_statuses.append(status)
