@@ -1,7 +1,6 @@
 from playwright.sync_api import sync_playwright
 import os
 import requests
-import time
 
 def send_telegram_message(message):
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
@@ -58,9 +57,6 @@ if __name__ == "__main__":
         status = login_koyeb(email, password)
         login_statuses.append(status)
         print(status)
-
-        # 每个账号登录后延时 30 秒
-        time.sleep(30)
 
     if login_statuses:
         message = "WEBHOST登录状态:\n\n" + "\n".join(login_statuses)
