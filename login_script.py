@@ -19,7 +19,7 @@ def login_koyeb(email, password):
         browser = p.firefox.launch(headless=True)
         page = browser.new_page()
 
-        # 访问Koyeb登录页面
+        # 访问登录页面
         page.goto("https://webhostmost.com/login")
 
         # 输入邮箱和密码
@@ -34,14 +34,14 @@ def login_koyeb(email, password):
         # 等待可能出现的错误消息或成功登录后的页面
         try:
             # 等待可能的错误消息
-            error_message = page.wait_for_selector('.MuiAlert-message', timeout=10000)
+            error_message = page.wait_for_selector('.MuiAlert-message', timeout=5000)
             if error_message:
                 error_text = error_message.inner_text()
                 return f"账号 {email} 登录失败: {error_text}"
         except:
             # 如果没有找到错误消息,检查是否已经跳转到仪表板页面
             try:
-                page.wait_for_url("https://webhostmost.com/clientarea.php", timeout=10000)
+                page.wait_for_url("https://webhostmost.com/clientarea.php", timeout=5000)
                 return f"账号 {email} 登录成功!"
             except:
                 return f"账号 {email} 登录失败: 未能跳转到仪表板页面"
@@ -49,7 +49,7 @@ def login_koyeb(email, password):
             browser.close()
 
 if __name__ == "__main__":
-    accounts = os.environ.get('WEBHOST', '').split(' ')
+    accounts = os.environ.get('WEBHOST', '').split()
     login_statuses = []
 
     for account in accounts:
