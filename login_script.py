@@ -53,16 +53,16 @@ def attempt_login(page, email: str, password: str) -> Tuple[bool, str]:
             error_message = page.wait_for_selector('.MuiAlert-message', timeout=5000)
             if error_message:
                 error_text = error_message.inner_text()
-                return False, f"Login failed: {error_text}"
+                return False, f"登录失败: {error_text}"
         except TimeoutError:
             # Check for successful redirect to dashboard
             try:
                 page.wait_for_url("https://webhostmost.com/clientarea.php", timeout=5000)
-                return True, "Login successful!"
+                return True, "登录成功!"
             except TimeoutError:
-                return False, "Login failed: Could not redirect to dashboard"
+                return False, "登录失败: 未能跳转到仪表板页面"
     except Exception as e:
-        return False, f"Login attempt failed: {str(e)}"
+        return False, f"登录尝试失败: {str(e)}"
 
 def login_webhost(email: str, password: str, max_retries: int = 5) -> str:
     """
@@ -84,18 +84,18 @@ def login_webhost(email: str, password: str, max_retries: int = 5) -> str:
             try:
                 success, message = attempt_login(page, email, password)
                 if success:
-                    return f"Account {email} - {message} (attempt {attempt}/{max_retries})"
+                    return f"帐号 {email} - {message} (尝试登陆次数{attempt}/{max_retries})"
                 
                 # If not successful and we have more retries
                 if attempt < max_retries:
                     print(f"Retry {attempt}/{max_retries} for {email}: {message}")
                     time.sleep(2 * attempt)  # Exponential backoff
                 else:
-                    return f"Account {email} - All {max_retries} attempts failed. Last error: {message}"
+                    return f"帐号 {email} - 尝试登陆{max_retries}次 {message}"
                 
             except Exception as e:
                 if attempt == max_retries:
-                    return f"Account {email} - Fatal error after {max_retries} attempts: {str(e)}"
+                    return f"帐号 {email} - Fatal error after {max_retries} attempts: {str(e)}"
             
             attempt += 1
         
@@ -115,10 +115,10 @@ if __name__ == "__main__":
     
     # Send results to Telegram
     if login_statuses:
-        message = "WEBHOST Login Status:\n\n" + "\n".join(login_statuses)
+        message = "WEBHOST登录状态:\n\n" + "\n".join(login_statuses)
         result = send_telegram_message(message)
-        print("Message sent to Telegram:", result)
+        print("消息已发送到Telegram:", result)
     else:
-        error_message = "No accounts configured"
+        error_message = "没有配置任何账号"
         send_telegram_message(error_message)
         print(error_message)
