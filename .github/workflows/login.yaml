@@ -1,12 +1,12 @@
 name: Run Login Script
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: '0 12 * * 5'  # 每周五北京时间20时运行一次
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   login:
@@ -23,7 +23,7 @@ jobs:
       - name: 设置 Python 环境
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.x'
 
       - name: 安装依赖
         run: |
