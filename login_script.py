@@ -37,7 +37,7 @@ def attempt_login(page, email: str, password: str) -> Tuple[bool, str]:
     """
     try:
         # Navigate to login page
-        page.goto("https://webhostmost.com/login")
+        page.goto("https://client.webhostmost.com/login")
         
         # Fill login form
         page.get_by_placeholder("Enter email").click()
@@ -57,7 +57,7 @@ def attempt_login(page, email: str, password: str) -> Tuple[bool, str]:
         except TimeoutError:
             # Check for successful redirect to dashboard
             try:
-                page.wait_for_url("https://webhostmost.com/clientarea.php", timeout=5000)
+                page.wait_for_url("https://client.webhostmost.com/clientarea.php", timeout=5000)
                 return True, "登录成功!"
             except TimeoutError:
                 return False, "登录失败: 未能跳转到仪表板页面"
